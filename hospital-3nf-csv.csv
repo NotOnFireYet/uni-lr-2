@@ -1,0 +1,41 @@
+-- создание сущностей
+CREATE TABLE public.doctor (
+    id bigint NOT NULL,
+    section_id bigint NOT NULL,
+    first_name character varying NOT NULL,
+    last_name character varying NOT NULL
+);
+
+CREATE TABLE public.patient (
+    id bigint NOT NULL,
+    first_name character varying NOT NULL,
+    last_name character varying NOT NULL,
+    section_id bigint,
+    doctor_id bigint NOT NULL
+);
+
+CREATE TABLE public.section (
+    id bigint NOT NULL,
+    name character varying NOT NULL
+);
+
+-- добавление внешних ключей
+ALTER TABLE public.doctor
+    ADD CONSTRAINT doctor_pkey PRIMARY KEY (id);
+
+ALTER TABLE public.patient
+    ADD CONSTRAINT patient_pkey PRIMARY KEY (id);
+
+ALTER TABLE public.section
+    ADD CONSTRAINT section_pkey PRIMARY KEY (id);
+
+CREATE INDEX fki_section_id ON public.doctor USING btree (section_id);
+
+ALTER TABLE public.patient
+    ADD CONSTRAINT patient_doctor_id_fk FOREIGN KEY (doctor_id) REFERENCES public.doctor(id);
+
+ALTER TABLE public.patient
+    ADD CONSTRAINT patient_section_id_fk FOREIGN KEY (section_id) REFERENCES public.section(id);
+
+ALTER TABLE public.doctor
+    ADD CONSTRAINT section_id FOREIGN KEY (section_id) REFERENCES public.section(id);

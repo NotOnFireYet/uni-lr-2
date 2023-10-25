@@ -1,0 +1,110 @@
+ --  создание хаб-таблиц
+CREATE TABLE public.hub_doctor (
+    id bigint NOT NULL,
+    create_date time with time zone NOT NULL
+);
+
+CREATE TABLE public.hub_patient (
+    id bigint NOT NULL,
+    creation_date time with time zone NOT NULL
+);
+
+
+CREATE TABLE public.hub_section (
+    id bigint NOT NULL,
+    creation_date time with time zone NOT NULL
+);
+
+--  создание линк-таблиц со связями хабов 
+CREATE TABLE public.link_doctor_patient (
+    id bigint NOT NULL,
+    hub_doctor_id bigint NOT NULL,
+    hub_patient_id bigint NOT NULL
+);
+
+CREATE TABLE public.link_doctor_section (
+    id bigint NOT NULL,
+    hub_doctor_id bigint NOT NULL,
+    hub_section_id bigint NOT NULL
+);
+
+CREATE TABLE public.link_patient_section (
+    id bigint NOT NULL,
+    hub_patient_id bigint NOT NULL,
+    hub_section_id bigint NOT NULL
+);
+
+--  создание таблиц-сателлитов с информацией о хабах
+CREATE TABLE public.sat_doctor (
+    id bigint NOT NULL,
+    hub_doctor_id bigint NOT NULL,
+    first_name character varying NOT NULL,
+    last_name character varying NOT NULL
+);
+
+CREATE TABLE public.sat_patient (
+    id bigint NOT NULL,
+    hub_patient_id bigint NOT NULL,
+    fist_name character varying NOT NULL,
+    last_name character varying NOT NULL,
+    insurance_num character varying NOT NULL
+);
+
+CREATE TABLE public.sat_section (
+    id bigint NOT NULL,
+    hub_section_id bigint NOT NULL,
+    name character varying NOT NULL
+);
+
+-- добавление внешних ключей	
+ALTER TABLE  public.hub_doctor
+    ADD CONSTRAINT hub_doctor_pkey PRIMARY KEY (id);
+
+ALTER TABLE  public.hub_patient
+    ADD CONSTRAINT hub_patient_pkey PRIMARY KEY (id);
+
+ALTER TABLE  public.hub_section
+    ADD CONSTRAINT hub_section_pkey PRIMARY KEY (id);
+
+ALTER TABLE  public.link_doctor_patient
+    ADD CONSTRAINT link_doctor_patient_pkey PRIMARY KEY (id);
+
+ALTER TABLE  public.link_doctor_section
+    ADD CONSTRAINT link_doctor_section_pkey PRIMARY KEY (id);
+
+ALTER TABLE  public.link_patient_section
+    ADD CONSTRAINT link_patient_section_pkey PRIMARY KEY (id);
+
+ALTER TABLE  public.sat_patient
+    ADD CONSTRAINT sat_patient_pkey PRIMARY KEY (id);
+
+ALTER TABLE  public.sat_section
+    ADD CONSTRAINT sat_section_pkey PRIMARY KEY (id);
+
+ALTER TABLE  public.link_doctor_patient
+    ADD CONSTRAINT link_doc_pat_doc_fk FOREIGN KEY (hub_doctor_id) REFERENCES public.hub_doctor(id);
+
+ALTER TABLE  public.link_doctor_patient
+    ADD CONSTRAINT link_doc_pat_pat_fk FOREIGN KEY (hub_patient_id) REFERENCES public.hub_patient(id);
+
+ALTER TABLE  public.link_doctor_section
+    ADD CONSTRAINT link_doc_sec_doc_fk FOREIGN KEY (hub_doctor_id) REFERENCES public.hub_doctor(id);
+
+ALTER TABLE  public.link_doctor_section
+    ADD CONSTRAINT link_doc_sec_sec_fk FOREIGN KEY (hub_section_id) REFERENCES public.hub_section(id);
+
+ALTER TABLE  public.link_patient_section
+    ADD CONSTRAINT link_pat_sec_pat_fk FOREIGN KEY (hub_patient_id) REFERENCES public.hub_patient(id);
+
+
+ALTER TABLE  public.link_patient_section
+    ADD CONSTRAINT link_pat_sec_sec_fk FOREIGN KEY (hub_section_id) REFERENCES public.hub_section(id);
+
+ALTER TABLE  public.sat_doctor
+    ADD CONSTRAINT sat_doc_doc_fk FOREIGN KEY (hub_doctor_id) REFERENCES public.hub_doctor(id);
+
+ALTER TABLE  public.sat_patient
+    ADD CONSTRAINT sat_pat_pat_fk FOREIGN KEY (hub_patient_id) REFERENCES public.hub_patient(id);
+
+ALTER TABLE  public.sat_section
+    ADD CONSTRAINT sat_sec_sec_fk FOREIGN KEY (hub_section_id) REFERENCES public.hub_section(id);
